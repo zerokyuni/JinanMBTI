@@ -22,3 +22,11 @@ webp
 ogimage
 1200 x 630 px
 url
+
+startimg
+240 x 240 px
+png
+
+qimg
+800 x 400 px
+png 300KB <
