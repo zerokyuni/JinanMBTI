@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나는 어떤 진안일까? - 진안 MBTI 테스트</title>
+    
+    <!-- Open Graph Tags (SNS 공유 시 썸네일/설명) -->
+    <meta property="og:title" content="나는 어떤 진안일까?">
+    <meta property="og:description" content="MBTI로 알아보는 나와 찰떡인 진안 명소/축제 테스트!">
+    <!-- og:image 에는 나중에 실제 진안 풍경 이미지를 웹에 올린 후 해당 URL을 넣으세요 -->
+    <meta property="og:image" content="https://images.unsplash.com/photo-1590250020117-063990715ba5?auto=format&fit=crop&w=800&q=80">
+    
+    <!-- Tailwind CSS (디자인 프레임워크) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 폰트: Noto Sans KR -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f0fdf4; }
+        .fade-in { animation: fadeIn 0.5s ease-in forwards; }
+        .hidden { display: none !important; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .progress-bar { transition: width 0.3s ease; }
+    </style>
+</head>
+<body class="text-gray-800 antialiased min-h-screen flex items-center justify-center p-4">
+
+    <!-- 메인 컨테이너 (모바일 화면 비율) -->
+    <main class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden min-h-[600px] flex flex-col relative">
+
+        <!-- 1. 시작 화면 -->
+        <section id="start-screen" class="flex flex-col items-center justify-center p-8 flex-1 fade-in relative overflow-hidden bg-cover bg-center" style="background-image: url('bgi/STARTbg.png');">
+            <!-- 배경 이미지 위에 반투명 흰색 레이어를 깔아 글씨 가독성 확보 -->
+            <div class="absolute inset-0 bg-white/80 z-0"></div>
+            
+            <div class="relative z-10 flex flex-col items-center w-full">
+                <div class="text-6xl mb-4">🏞️</div>
+                <h1 class="text-3xl font-black text-emerald-800 mb-2 text-center break-keep">나는 어떤<br>진안일까?</h1>
+                <p class="text-gray-700 font-bold mb-8 text-center text-sm break-keep">내 성향과 찰떡인 진안의 명소, 축제, 특산물을 찾아보세요!</p>
+                <button onclick="startTest()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl transition duration-200 shadow-lg text-lg">
+                    테스트 시작하기
+                </button>
+            </div>
+        </section>
+
+        <!-- 2. 질문 화면 -->
+        <section id="question-screen" class="flex-col p-6 flex-1 hidden">
+            <!-- 프로그레스 바 -->
+            <div class="w-full bg-gray-200 rounded-full h-2.5 mb-8 mt-4">
+                <div id="progress-bar" class="bg-emerald-500 h-2.5 rounded-full progress-bar" style="width: 0%"></div>
+            </div>
+            
+            <div class="flex-1 flex flex-col justify-center mb-8">
+                <p id="question-number" class="text-emerald-600 font-bold mb-2 text-sm">Q. 1/12</p>
+                <h2 id="question-text" class="text-xl font-bold break-keep leading-relaxed">질문 텍스트</h2>
+            </div>
+
+            <div class="space-y-3 mt-auto mb-4">
+                <button onclick="selectAnswer(0)" id="answer-a" class="w-full bg-gray-50 hover:bg-emerald-50 border-2 border-gray-100 hover:border-emerald-500 text-left p-4 rounded-xl transition duration-200 font-medium break-keep">
+                    답변 A
+                </button>
+                <button onclick="selectAnswer(1)" id="answer-b" class="w-full bg-gray-50 hover:bg-emerald-50 border-2 border-gray-100 hover:border-emerald-500 text-left p-4 rounded-xl transition duration-200 font-medium break-keep">
+                    답변 B
+                </button>
+            </div>
+        </section>
+
+        <!-- 3. 로딩 화면 -->
+        <section id="loading-screen" class="flex flex-col items-center justify-center p-8 flex-1 hidden">
+            <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-emerald-600 mb-6"></div>
+            <h2 class="text-xl font-bold text-gray-700 text-center break-keep">나와 찰떡인<br>진안의 모습을 찾는 중...</h2>
+        </section>
+
+        <!-- 4. 결과 화면 -->
+        <section id="result-screen" class="flex-col items-center flex-1 p-6 hidden fade-in overflow-y-auto">
+            <!-- 결과 카드 (배경 이미지 적용을 위해 수정됨) -->
+            <div id="result-card" class="w-full rounded-2xl p-6 flex flex-col items-center text-center mt-4 relative overflow-hidden bg-cover bg-center shadow-lg transition-all duration-500">
+                <!-- 어두운 오버레이 (글씨가 잘 보이도록) -->
+                <div class="absolute inset-0 bg-black/60 z-0"></div>
+                
+                <!-- 콘텐츠 (z-index 설정으로 오버레이 위로 배치) -->
+                <div class="relative z-10 flex flex-col items-center w-full">
+                    <p class="text-emerald-300 font-bold mb-2 drop-shadow-md">당신과 닮은 진안의 모습은</p>
+                    <div id="result-emoji" class="text-7xl mb-4 drop-shadow-lg">🌫️</div>
+                    <h1 id="result-title" class="text-2xl font-black text-white mb-4 break-keep drop-shadow-lg">용담호 새벽 물안개</h1>
+                    <div class="w-12 h-1 bg-emerald-400 mb-4 rounded-full"></div>
+                    <p id="result-desc" class="text-gray-100 text-sm leading-relaxed break-keep text-left w-full drop-shadow-md font-medium">
+                        결과 설명이 여기에 들어갑니다.
+                    </p>
+                </div>
+            </div>
+
+            <div class="w-full mt-6 space-y-3 mb-6">
+                <!-- 추가된 진안 더 알아보기 버튼 -->
+                <button id="more-info-btn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition duration-200 flex justify-center items-center gap-2 shadow-md text-lg">
+                    🔎 나의 진안 더 알아보기
+                </button>
+                <button onclick="shareResult()" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 rounded-xl transition duration-200 flex justify-center items-center gap-2">
+                    📤 결과 공유하기
+                </button>
+                <button onclick="restartTest()" class="w-full bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold py-3 rounded-xl transition duration-200">
+                    다시 하기
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- 1. 질문 데이터 ---
+        const questions = [
+            // E vs I
+            {
+                q: "주말에 진안으로 훌쩍 여행을 간다면?",
+                answers: [
+                    { text: "사람들이 북적이는 핫플! 마이산 남부 등갈비 골목으로 간다.", type: "E" },
+                    { text: "조용하고 한적한 데미샘 생태숲에서 혼자만의 여유를 즐긴다.", type: "I" }
+                ]
+            },
+            {
+                q: "여행 중 진안 홍삼 축제에 방문했다. 내 모습은?",
+                answers: [
+                    { text: "무대 앞이나 부스에서 이것저것 체험하며 적극적으로 즐긴다!", type: "E" },
+                    { text: "조금 뒤에서 사람들을 구경하며 맛있는 음식을 여유롭게 먹는다.", type: "I" }
+                ]
+            },
+            {
+                q: "진안의 펜션에서 새로운 여행객을 만났을 때?",
+                answers: [
+                    { text: "반갑게 인사하며 진안에서 어디 다녀왔는지 자연스럽게 물어본다.", type: "E" },
+                    { text: "가벼운 목례를 하고 내일 일정을 확인하며 내 시간에 집중한다.", type: "I" }
+                ]
+            },
+            // S vs N
+            {
+                q: "마이산 탑사의 거대한 돌탑들을 보며 드는 생각은?",
+                answers: [
+                    { text: "'와, 태풍에도 안 무너지다니.. 어떻게 쌓은 걸까?' 감탄을 한다.", type: "S" },
+                    { text: "'사실 이 돌탑들이 진안을 지키는 거대한 장치같은거 아닐까?' 상상해 본다.", type: "N" }
+                ]
+            },
+            {
+                q: "운일암반일암 계곡의 예쁜 풍경을 보았을 때?",
+                answers: [
+                    { text: "예쁜 구도를 잡아 사진을 찍고 눈앞의 아름다운 자연 그 자체를 즐긴다.", type: "S" },
+                    { text: "이 풍경과 어울리는 노래나 영화의 한 장면, 혹은 과거의 추억이 떠오른다.", type: "N" }
+                ]
+            },
+            {
+                q: "친구에게 진안 여행을 추천할 때 나는?",
+                answers: [
+                    { text: "\"거기 흑돼지 진짜 맛있고, 운일암반일암 구름다리 엄청 길어! 꼭 가봐!\"", type: "S" },
+                    { text: "\"진안의 자연을 느껴보면 진짜 뭔가 힐링되고 치유받는 느낌이 있어!\"", type: "N" }
+                ]
+            },
+            // T vs F
+            {
+                q: "친구가 '진안 여행 가다가 길을 잘못 들어서 너무 헤맸어 ㅠㅠ' 라고 한다면?",
+                answers: [
+                    { text: "어디쯤이야? 진안 관광안내소에 전화해봤어? 전화번호 보내줄까?", type: "T" },
+                    { text: "진짜? 많이 당황했겠다 ㅠㅠ 다치진 않았고? 고생했어!", type: "F" }
+                ]
+            },
+            {
+                q: "진안의 맛집을 고르는 나만의 기준은?",
+                answers: [
+                    { text: "지도앱 리뷰 수, 별점, 청결도 등 객관적인 정보가 중요하다.", type: "T" },
+                    { text: "리뷰가 적어도 사장님이 친절하거나 가게의 정겨운 정취가 끌린다.", type: "F" }
+                ]
+            },
+            {
+                q: "예상치 못하게 비가 와서 야외 일정을 취소해야 할 때 내 반응은?",
+                answers: [
+                    { text: "빠르게 주변 실내 명소나 예쁜 카페를 검색해 플랜 B를 가동한다.", type: "T" },
+                    { text: "아쉽지만 비 오는 진안도 운치 있지! 이것도 다 추억이라며 마음을 다독인다.", type: "F" }
+                ]
+            },
+            // J vs P
+            {
+                q: "내일 진안으로 출발! 짐을 싸는 내 모습은?",
+                answers: [
+                    { text: "며칠 전부터 필요한 물품 리스트를 생각하고 빠짐없이 깔끔하게 챙겨둔다.", type: "J" },
+                    { text: "전날 밤이나 당일 아침에 캐리어를 열고 눈에 보이는 대로 팍팍 넣는다.", type: "P" }
+                ]
+            },
+            {
+                q: "진안고원길을 걷다가 우연히 엄청 예쁜 카페를 발견했다!",
+                answers: [
+                    { text: "원래 일정에 없던 곳이니 밖에서 사진만 찍거나 다음 목적지로 향한다.", type: "J" },
+                    { text: "오, 느낌 있는데? 일정이 지연되더라도 일단 들어가서 커피 한잔 시킨다.", type: "P" }
+                ]
+            },
+            {
+                q: "당신의 이번 진안 여행 목표는?",
+                answers: [
+                    { text: "계획했던 명소와 맛집 동선을 완벽하고 효율적으로 클리어하는 것!", type: "J" },
+                    { text: "발길 닿는 대로, 그때그때 끌리는 대로 얽매이지 않고 행복하게 즐기는 것!", type: "P" }
+                ]
+            }
+        ];
+
+        // --- 2. 결과 데이터 (16가지 진안 매핑) ---
+        const results = {
+            "INFJ": { title: "용담호 새벽 물안개", emoji: "🌫️", desc: "고요하고 깊은 내면을 가진 당신은 몽환적이고 신비로운 용담호의 새벽 물안개를 닮았어요. 겉으로는 조용해 보이지만, 마음속에는 깊은 통찰력과 따뜻한 감수성을 품고 있죠. 당신의 신비로운 매력은 맑은 날씨보다는 촉촉한 안개 낀 아침처럼 사람들에게 깊은 여운을 남깁니다.", bgImage: "bgi/INFJbg.png", link: "https://search.naver.com/search.naver?query=진안+용담호" },
+            "ENFP": { title: "고원길 9코스 눈치보지마시개길", emoji: "🐶", desc: "어디로 튈지 모르는 자유로운 영혼! 반려견과 함께 맘껏 뛰노는 고원길 9코스 눈치보지마시개길의 활력을 가졌군요. 새로운 것을 좋아하고 열정이 넘치는 당신은 주변 사람들에게 항상 긍정적인 에너지를 전파합니다. 형식에 얽매이는 것을 싫어하는 당신에게 진안의 고원길은 최고의 놀이터입니다.", bgImage: "bgi/ENFPbg.png", link: "https://search.naver.com/search.naver?query=진안+고원길+눈치보지마시개길" },
+            "ESFJ": { title: "진안김치보쌈 축제", emoji: "🥬", desc: "사람 만나는 걸 좋아하고 정이 넘치는 당신은, 맛있는 음식과 웃음이 끊이지 않는 김치보쌈 축제 그 자체! 타인의 감정을 잘 배려하고 챙겨주는 성격 덕분에 어딜 가나 인기가 많습니다. 넉넉한 진안의 인심처럼, 당신 곁에는 항상 사람들이 머물고 싶어 하네요.", bgImage: "bgi/ESFJbg.png", link: "https://search.naver.com/search.naver?query=진안+고원+김치보쌈축제" },
+            "ISTP": { title: "실속 만점 진안고원몰", emoji: "🛒", desc: "복잡한 건 질색, 필요한 것만 쏙쏙 고르는 실용주의자! 당신은 진안의 우수한 특산물만 알차게 모아놓은 '진안고원몰'과 꼭 닮았습니다. 평소엔 조용하지만, 자신이 원하는 확실한 목표를 발견하면 망설임 없는 결단력을 보여줍니다. 군더더기 없이 실속 있고 깔끔한 당신의 성격은 참 매력적입니다.", bgImage: "bgi/ISTPbg.png", link: "https://search.naver.com/search.naver?query=진안고원몰" },
+            "INTP": { title: "마이산 미스터리 돌탑", emoji: "🪨", desc: "강풍에도 무너지지 않는 신비한 돌탑처럼, 당신의 머릿속은 논리와 호기심으로 견고하게 쌓여 있네요. 남들이 보지 못하는 이면을 분석하고 탐구하는 것을 좋아합니다. 조용하지만 머릿속은 우주만큼 복잡한 당신은, 알면 알수록 신비로운 마이산 탑사와 꼭 닮았습니다.", bgImage: "bgi/INTPbg.png", link: "https://search.naver.com/search.naver?query=진안+마이산+탑사" },
+            "ISFP": { title: "원연장 꽃잔디 동산의 봄바람", emoji: "🌸", desc: "아름다운 것을 사랑하고 여유를 즐길 줄 아는 당신. 화사한 분홍빛으로 온 산을 뒤덮는 원연장 꽃잔디 동산의 따스한 봄날을 닮았어요. 틀에 얽매이는 것을 싫어하고 현재의 소소한 기쁨을 가장 중요하게 생각합니다. 당신의 다정하고 온화한 성품은 활짝 핀 꽃잔디처럼 주변 사람들의 마음을 부드럽게 물들입니다.", bgImage: "bgi/ISFPbg.png", link: "https://search.naver.com/search.naver?query=진안+원연장+꽃잔디동산" },
+            "ESTP": { title: "마이산 등갈비 골목", emoji: "🍖", desc: "행동파에 인싸 기질 다분! 냄새부터 시선을 사로잡는 마이산 입구의 등갈비 골목처럼 존재감이 확실합니다. 지루한 건 못 참고 스릴과 모험을 즐기며, 임기응변에 매우 능숙하죠. 당신이 있는 곳은 언제나 시끌벅적하고 활기찬 에너지가 넘쳐흐릅니다.", bgImage: "bgi/ESTPbg.png", link: "https://search.naver.com/search.naver?query=진안+마이산+등갈비골목" },
+            "INTJ": { title: "운일암반일암 구름다리 칼바람", emoji: "🌉", desc: "높은 곳에서 전체를 조망하는 냉철함. 아찔한 구름다리 위에서 부는 시원하고 날카로운 바람을 닮았군요. 전략적이고 독립적인 당신은 뚜렷한 목표를 향해 흔들림 없이 나아갑니다. 감정에 휘둘리지 않는 단단함 속에는 세상을 꿰뚫어 보는 통찰력이 숨어 있습니다.", bgImage: "bgi/INTJbg.png", link: "https://search.naver.com/search.naver?query=진안+운일암반일암+구름다리" },
+            "ISFJ": { title: "자연휴양림 숲 속 데미샘", emoji: "💧", desc: "섬진강의 발원지 데미샘처럼, 조용하지만 주변 사람들에게 꼭 필요하고 든든한 생명수 같은 존재입니다. 성실하고 책임감이 강해 묵묵히 자신의 역할을 다하며, 주변 사람들을 세심하게 챙깁니다. 화려하진 않아도 변함없는 당신의 모습은 깊은 숲속의 옹달샘처럼 맑고 깨끗합니다.", bgImage: "bgi/ISFJbg.png", link: "https://search.naver.com/search.naver?query=진안+데미샘+자연휴양림" },
+            "ISTJ": { title: "가위박물관의 정밀한 가위", emoji: "✂️", desc: "객관적이고 정확한 실용주의자. 세계 유일의 진안 가위박물관에 전시되어있는 가위들처럼, 맺고 끊음이 확실하고 군더더기 없는 성격입니다. 감정보다는 사실에 기반하여 이성적으로 판단하며, 맡은 일은 빈틈없이 완벽하게 처리하죠. 실용적이고 체계적인 당신의 업무 처리 능력은 늘 사람들의 깊은 신뢰를 받습니다.", bgImage: "bgi/ISTJbg.png", link: "https://search.naver.com/search.naver?query=진안+가위박물관" },
+            "INFP": { title: "몽환적인 부귀 메타세쿼이아 길", emoji: "🌲", desc: "감수성이 풍부하고 상상력이 뛰어난 당신. 끝없이 펼쳐진 부귀 메타세쿼이아 길의 몽환적이고 낭만적인 풍경을 품고 있네요. 겉으로는 조용해 보이지만, 깊은 내면에는 한 편의 동화 같은 세계를 간직하고 있습니다. 당신의 따뜻한 공감 능력과 부드러운 에너지는 숲길을 걷는 사람들에게 깊은 힐링과 위로를 선사합니다.", bgImage: "bgi/INFPbg.png", link: "https://search.naver.com/search.naver?query=진안+부귀+메타세쿼이아길" },
+            "ESTJ": { title: "진안 홍삼축제 운영위원장", emoji: "🎪", desc: "체계적이고 추진력이 넘치는 당신! 전국 유일의 홍삼특구에서 펼쳐지는 활기찬 '진안 홍삼축제'의 든든한 운영위원장 같습니다. 현실적이고 논리적인 판단으로 복잡한 일도 척척 해내며, 특유의 리더십으로 사람들을 모으고 행사를 성공적으로 이끕니다. 효율을 중시하면서도 사람들에게 건강한 에너지를 선물하는 당신의 열정은 진안홍삼축제와 완벽한 찰떡궁합입니다!", bgImage: "bgi/ESTJbg.png", link: "https://search.naver.com/search.naver?query=진안+홍삼축제" },
+            "ENFJ": { title: "구봉산 정상의 절경", emoji: "⛰️", desc: "타인에게 영감을 주고 이끄는 당신. 힘든 산행 끝에 모두에게 감동을 주는 구봉산 정상의 탁 트인 뷰를 닮았어요. 뛰어난 공감 능력과 카리스마로 사람들의 성장을 돕는 타고난 리더입니다. 당신의 긍정적인 말 한마디는 구봉산 정상에서 불어오는 바람처럼 사람들의 가슴을 뻥 뚫어줍니다.", bgImage: "bgi/ENFJbg.png", link: "https://search.naver.com/search.naver?query=진안+구봉산+등산" },
+            "ENTJ": { title: "진안고원 치유숲 거목", emoji: "🌲", desc: "목표를 향해 거침없이 나아가는 당신. 숲을 지탱하며 주변을 압도하는 든든하고 거대한 나무의 기운이 느껴집니다. 대담하고 결단력이 뛰어나며, 장기적인 비전을 세우는 데 탁월합니다. 당신의 존재감은 거목처럼 든든하여 많은 사람들이 믿고 의지하게 만듭니다.", bgImage: "bgi/ENTJbg.png", link: "https://search.naver.com/search.naver?query=진안고원+치유숲" },
+            "ENTP": { title: "용담댐 드라이브 코스", emoji: "🛣️", desc: "뻔한 길은 거부하는 아이디어 뱅크. 굽이굽이 예측할 수 없지만 그래서 더 재밌는 용담댐 드라이브 코스 같아요. 논쟁을 즐기고 끊임없이 새로운 가능성을 탐구합니다. 당신과 함께하는 시간은 결코 지루할 틈이 없는 흥미진진한 드라이브 같습니다.", bgImage: "bgi/ENTPbg.png", link: "https://search.naver.com/search.naver?query=진안+용담댐+드라이브" },
+            "ESFP": { title: "진안 동향 수박축제의 수박화채", emoji: "🍉", desc: "어딜 가나 분위기 메이커! 한여름 무더위를 날려버리는 수박화채처럼 톡톡 튀고 시원한 에너지를 가졌습니다. 현재의 삶을 가장 즐겁게 살아가는 당신은 스포트라이트를 받는 것을 즐깁니다. 당신의 통통 튀는 매력은 진안의 고랭지 수박처럼 주변 사람들의 기분까지 상쾌하게 만들어 줍니다.", bgImage: "bgi/ESFPbg.png", link: "https://search.naver.com/search.naver?query=진안+고원+동향+수박축제" }
+        };
+
+        // --- 3. 상태 변수 ---
+        let currentIdx = 0;
+        let scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+        let currentResultTitle = ""; // 공유 시 사용할 결과 타이틀 저장용
+
+        // DOM 요소 가져오기
+        const startScreen = document.getElementById('start-screen');
+        const questionScreen = document.getElementById('question-screen');
+        const loadingScreen = document.getElementById('loading-screen');
+        const resultScreen = document.getElementById('result-screen');
+        
+        // --- 4. 함수 로직 ---
+        function startTest() {
+            startScreen.classList.add('hidden');
+            questionScreen.classList.remove('hidden');
+            questionScreen.classList.add('flex');
+            updateQuestion();
+        }
+
+        function updateQuestion() {
+            if (currentIdx >= questions.length) {
+                showLoading();
+                return;
+            }
+
+            const q = questions[currentIdx];
+            document.getElementById('question-number').innerText = `Q. ${currentIdx + 1}/${questions.length}`;
+            document.getElementById('question-text').innerText = q.q;
+            
+            // 버튼 텍스트 설정 및 onClick 이벤트 연결
+            const btnA = document.getElementById('answer-a');
+            const btnB = document.getElementById('answer-b');
+            
+            btnA.innerText = q.answers[0].text;
+            btnA.setAttribute('onclick', `selectAnswer('${q.answers[0].type}')`);
+            
+            btnB.innerText = q.answers[1].text;
+            btnB.setAttribute('onclick', `selectAnswer('${q.answers[1].type}')`);
+
+            // 프로그레스 바 업데이트
+            const progress = ((currentIdx) / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+        }
+
+        function selectAnswer(type) {
+            scores[type]++;
+            currentIdx++;
+            updateQuestion();
+        }
+
+        function showLoading() {
+            questionScreen.classList.add('hidden');
+            questionScreen.classList.remove('flex');
+            loadingScreen.classList.remove('hidden');
+            loadingScreen.classList.add('flex');
+
+            // 1.5초 후 결과 화면으로 전환
+            setTimeout(() => {
+                calculateResult();
+            }, 1500);
+        }
+
+        function calculateResult() {
+            let mbti = "";
+            mbti += scores.E > scores.I ? "E" : "I";
+            mbti += scores.S > scores.N ? "S" : "N";
+            mbti += scores.T > scores.F ? "T" : "F";
+            mbti += scores.J > scores.P ? "J" : "P";
+
+            const resultData = results[mbti];
+            
+            // 공유 기능을 위해 현재 결과 타이틀을 변수에 저장
+            currentResultTitle = resultData.title;
+
+            document.getElementById('result-emoji').innerText = resultData.emoji;
+            document.getElementById('result-title').innerText = resultData.title;
+            document.getElementById('result-desc').innerText = resultData.desc;
+            
+            // 1. 배경 이미지 적용
+            document.getElementById('result-card').style.backgroundImage = `url('${resultData.bgImage}')`;
+            
+            // 2. 더 알아보기 버튼 링크 연결
+            document.getElementById('more-info-btn').onclick = () => {
+                window.open(resultData.link, '_blank');
+            };
+
+            loadingScreen.classList.add('hidden');
+            loadingScreen.classList.remove('flex');
+            resultScreen.classList.remove('hidden');
+            resultScreen.classList.add('flex');
+        }
+
+        function restartTest() {
+            currentIdx = 0;
+            scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+            currentResultTitle = "";
+            resultScreen.classList.add('hidden');
+            resultScreen.classList.remove('flex');
+            startScreen.classList.remove('hidden');
+        }
+
+        function shareResult() {
+            const url = window.location.href;
+            const shareTitle = "나는 어떤 진안일까? - 진안 MBTI 테스트";
+            
+            // 결과 내용을 포함한 공유 텍스트 (줄바꿈 및 포맷팅 적용)
+            const shareText = `저는 [${currentResultTitle}]에요!\n당신은 어떤 진안인가요?\n\n👉 테스트 하러가기`;
+            const fallbackText = `저는 [${currentResultTitle}]에요! 당신은 어떤 진안인가요? > ${url}`;
+
+            // 1. 모바일 기기 등 Web Share API를 지원하는 경우 (네이티브 공유 창 띄우기)
+            if (navigator.share) {
+                navigator.share({
+                    title: shareTitle,
+                    text: shareText,
+                    url: url
+                }).then(() => {
+                    console.log('공유 성공');
+                }).catch((error) => {
+                    console.log('공유 실패 또는 취소', error);
+                });
+            } 
+            // 2. 지원하지 않는 환경 (PC 브라우저 등)에서는 기존처럼 링크 복사
+            else {
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(fallbackText).then(() => {
+                        alert("결과 텍스트와 링크가 복사되었습니다! 친구들에게 공유해보세요.");
+                    }).catch(err => {
+                        fallbackCopyTextToClipboard(fallbackText);
+                    });
+                } else {
+                    fallbackCopyTextToClipboard(fallbackText);
+                }
+            }
+        }
+
+        // Clipboard API를 지원하지 않는 브라우저를 위한 폴백 함수
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";  // 화면 스크롤 방지
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+                if(successful) {
+                    alert("결과 링크가 복사되었습니다! 친구들에게 공유해보세요.");
+                }
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+            }
+            document.body.removeChild(textArea);
+        }
+    </script>
+</body>
+</html>
