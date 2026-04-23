@@ -5,15 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>나는 어떤 진안일까? - 진안 MBTI 테스트</title>
     
-    <!-- Open Graph Tags (SNS 공유 시 썸네일/설명) -->
     <meta property="og:title" content="나는 어떤 진안일까?">
-    <meta property="og:description" content="MBTI로 알아보는 나와 찰떡인 진안 명소/축제 테스트!">
-    <!-- og:image 에는 나중에 실제 진안 풍경 이미지를 웹에 올린 후 해당 URL을 넣으세요 -->
+    <meta property="og:description" content="MBTI로 알아보는 나와 찰떡인 진안 찾기 테스트!">
     <meta property="og:image" content="https://zerokyuni.github.io/JinanMBTI/bgi/ogimage.jpg">
     
-    <!-- Tailwind CSS (디자인 프레임워크) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 폰트: Noto Sans KR -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
     
     <style>
@@ -29,8 +25,8 @@
         /* 모바일 터치 잔상(Sticky Hover) 방지용 CSS */
         @media (hover: hover) and (pointer: fine) {
             .answer-btn:hover {
-                background-color: #ecfdf5 !important;
-                border-color: #10b981 !important;
+                background-color: #ecfdf5 !important; /* emerald-50 */
+                border-color: #10b981 !important; /* emerald-500 */
             }
         }
         /* 터치하는 순간에만 피드백을 줍니다 */
@@ -42,42 +38,41 @@
 </head>
 <body class="text-gray-800 antialiased h-[100dvh] overflow-hidden flex items-center justify-center p-4 lg:py-8">
 
-    <!-- 메인 컨테이너 (모바일 화면 비율) -->
     <main class="bg-white w-full max-w-md h-full max-h-[850px] rounded-2xl shadow-xl overflow-hidden flex flex-col relative">
 
-        <!-- 1. 시작 화면 -->
-        <section id="start-screen" class="flex flex-col items-center justify-center p-8 flex-1 fade-in relative overflow-y-auto bg-cover bg-center" style="background-image: url('bgi/STARTbg.png');">
-            <!-- 배경 이미지 위에 반투명 흰색 레이어를 깔아 글씨 가독성 확보 -->
+        <!-- min-h-0 추가하여 flex 자식요소의 스크롤 정상 작동 보장 -->
+        <section id="start-screen" class="flex flex-col items-center justify-center p-8 flex-1 fade-in relative overflow-y-auto min-h-0 bg-cover bg-center" style="background-image: url('bgi/STARTbg.png');">
             <div class="absolute inset-0 bg-white/80 z-0"></div>
             
-            <div class="relative z-10 flex flex-col items-center w-full">
-                <img src="bgi/startpg.webp" alt="시작 이미지" class="w-20 h-20 mb-4 object-contain">
+            <div class="relative z-10 flex flex-col items-center w-full mt-4">
+                <!-- 1:1 정사각형 비율로 크기 확장 (w-56 h-56), 테두리 둥글게 적용 -->
+                <img src="bgi/startpg.webp" alt="시작 이미지" class="w-56 h-56 mb-8 object-cover rounded-2xl shadow-md">
+                
                 <h1 class="text-3xl font-black text-emerald-800 mb-2 text-center break-keep">나는 어떤<br>진안일까?</h1>
-                <p class="text-gray-700 font-bold mb-8 text-center text-sm break-keep">내 성향과 찰떡인 진안의 명소, 축제, 특산물을 찾아보세요!</p>
-                <button onclick="startTest()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl transition duration-200 shadow-lg text-lg">
+                <p class="text-gray-700 font-bold mb-10 text-center text-sm break-keep">내 성향과 찰떡인 진안을 찾아보세요!</p>
+                <button onclick="startTest()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl transition duration-200 shadow-lg text-lg shrink-0">
                     테스트 시작하기
                 </button>
             </div>
         </section>
 
-        <!-- 2. 질문 화면 -->
-        <section id="question-screen" class="flex-col p-6 flex-1 hidden overflow-y-auto">
-            <!-- 프로그레스 바 -->
-            <div class="w-full bg-gray-200 rounded-full h-2.5 mb-8 mt-4">
+        <!-- min-h-0 추가 -->
+        <section id="question-screen" class="flex-col p-6 flex-1 hidden overflow-y-auto min-h-0">
+            <div class="w-full shrink-0 bg-gray-200 rounded-full h-2.5 mb-6 mt-2">
                 <div id="progress-bar" class="bg-emerald-500 h-2.5 rounded-full progress-bar" style="width: 0%"></div>
             </div>
             
-            <div class="flex-1 flex flex-col justify-center mb-8">
+            <div class="flex-1 flex flex-col justify-center mb-8 shrink-0">
                 <p id="question-number" class="text-emerald-600 font-bold mb-2 text-sm">Q. 1/12</p>
                 <h2 id="question-text" class="text-xl font-bold break-keep leading-relaxed">질문 텍스트</h2>
                 
-                <!-- 추가된 질문 이미지 영역 -->
-                <div class="w-full h-48 mt-6 rounded-xl overflow-hidden shadow-sm bg-gray-50 flex-shrink-0">
+                <!-- 질문 이미지 영역: 1:1 정사각형 비율(w-56 h-56), 가운데 정렬(mx-auto) 적용 -->
+                <div class="w-56 h-56 mt-6 mx-auto rounded-2xl overflow-hidden shadow-sm bg-gray-50 flex-shrink-0">
                     <img id="question-image" src="" alt="질문 돕기 이미지" class="w-full h-full object-cover">
                 </div>
             </div>
 
-            <div class="space-y-3 mt-auto mb-4">
+            <div class="space-y-3 mt-auto mb-4 shrink-0">
                 <button onclick="selectAnswer(0)" id="answer-a" class="answer-btn w-full bg-gray-50 border-2 border-gray-100 text-left p-4 rounded-xl transition duration-200 font-medium break-keep">
                     답변 A
                 </button>
@@ -87,33 +82,30 @@
             </div>
         </section>
 
-        <!-- 3. 로딩 화면 -->
-        <section id="loading-screen" class="flex flex-col items-center justify-center p-8 flex-1 hidden">
+        <section id="loading-screen" class="flex flex-col items-center justify-center p-8 flex-1 hidden min-h-0">
             <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-emerald-600 mb-6"></div>
             <h2 class="text-xl font-bold text-gray-700 text-center break-keep">나와 찰떡인<br>진안의 모습을 찾는 중...</h2>
         </section>
 
-        <!-- 4. 결과 화면 -->
-        <section id="result-screen" class="flex-col items-center flex-1 p-6 hidden fade-in overflow-y-auto">
-            <!-- 결과 카드 (배경 이미지 적용) -->
-            <div id="result-card" class="w-full rounded-2xl p-6 flex flex-col items-center text-center mt-4 relative overflow-hidden bg-cover bg-center shadow-lg transition-all duration-500">
-                <!-- 어두운 오버레이 (글씨가 잘 보이도록) -->
+        <!-- min-h-0 추가하여 컨텐츠가 길어져도 스크롤되도록 처리 -->
+        <section id="result-screen" class="flex-col items-center flex-1 p-6 hidden fade-in overflow-y-auto min-h-0">
+            <!-- shrink-0 추가하여 카드 디자인이 찌그러지지 않고 본래 길이를 유지하게 함 -->
+            <div id="result-card" class="w-full shrink-0 rounded-2xl p-6 flex flex-col items-center text-center mt-4 relative overflow-hidden bg-cover bg-center shadow-lg transition-all duration-500">
                 <div class="absolute inset-0 bg-black/60 z-0"></div>
                 
-                <!-- 콘텐츠 (z-index 설정으로 오버레이 위로 배치) -->
                 <div class="relative z-10 flex flex-col items-center w-full">
                     <p class="text-emerald-300 font-bold mb-2 drop-shadow-md">당신과 닮은 진안의 모습은</p>
                     <div id="result-emoji" class="text-7xl mb-4 drop-shadow-lg">🌫️</div>
                     <h1 id="result-title" class="text-2xl font-black text-white mb-4 break-keep drop-shadow-lg">용담호 새벽 물안개</h1>
-                    <div class="w-12 h-1 bg-emerald-400 mb-4 rounded-full"></div>
+                    <div class="w-12 h-1 bg-emerald-400 mb-4 rounded-full shrink-0"></div>
                     <p id="result-desc" class="text-gray-100 text-sm leading-relaxed break-keep text-left w-full drop-shadow-md font-medium">
                         결과 설명이 여기에 들어갑니다.
                     </p>
                 </div>
             </div>
 
-            <div class="w-full mt-6 space-y-3 mb-6">
-                <!-- 추가된 진안 더 알아보기 버튼 -->
+            <!-- shrink-0 추가하여 스크롤 가장 아래에 버튼이 잘리거나 찌그러지지 않도록 처리 -->
+            <div class="w-full shrink-0 mt-6 space-y-3 mb-6">
                 <button id="more-info-btn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition duration-200 flex justify-center items-center gap-2 shadow-md text-lg">
                     🔎 나의 진안 더 알아보기
                 </button>
@@ -131,7 +123,6 @@
     <script>
         // --- 1. 질문 데이터 ---
         const questions = [
-            // E vs I
             {
                 q: "주말에 진안으로 훌쩍 여행을 간다면?",
                 answers: [
@@ -153,7 +144,6 @@
                     { text: "가벼운 목례를 하고 내일 일정을 확인하며 내 시간에 집중한다.", type: "I" }
                 ]
             },
-            // S vs N
             {
                 q: "마이산 탑사의 거대한 돌탑들을 보며 드는 생각은?",
                 answers: [
@@ -175,7 +165,6 @@
                     { text: "\"진안의 자연을 느껴보면 진짜 뭔가 힐링되고 치유받는 느낌이 있어!\"", type: "N" }
                 ]
             },
-            // T vs F
             {
                 q: "친구가 '진안 여행 가다가 길을 잘못 들어서 너무 헤맸어 ㅠㅠ' 라고 한다면?",
                 answers: [
@@ -197,7 +186,6 @@
                     { text: "아쉽지만 비 오는 진안도 운치 있지! 이것도 다 추억이라며 마음을 다독인다.", type: "F" }
                 ]
             },
-            // J vs P
             {
                 q: "내일 진안으로 출발! 짐을 싸는 내 모습은?",
                 answers: [
@@ -270,7 +258,7 @@
             document.getElementById('question-number').innerText = `Q. ${currentIdx + 1}/${questions.length}`;
             document.getElementById('question-text').innerText = q.q;
             
-            // 질문 이미지 동적 업데이트 경로 (bgi/q1.png 형식)
+            // 질문 이미지 동적 업데이트 경로 (bgi/q1.webp 형식)
             document.getElementById('question-image').src = `bgi/q${currentIdx + 1}.webp`;
             
             // 버튼 텍스트 설정 및 onClick 이벤트 연결
@@ -406,3 +394,6 @@
     </script>
 </body>
 </html>
+
+
+```
