@@ -51,7 +51,7 @@
             <div class="absolute inset-0 bg-white/80 z-0"></div>
             
             <div class="relative z-10 flex flex-col items-center w-full">
-                <img src="bgi/startpg.png" alt="시작 이미지" class="w-20 h-20 mb-4 object-contain">
+                <img src="bgi/startpg.webp" alt="시작 이미지" class="w-20 h-20 mb-4 object-contain">
                 <h1 class="text-3xl font-black text-emerald-800 mb-2 text-center break-keep">나는 어떤<br>진안일까?</h1>
                 <p class="text-gray-700 font-bold mb-8 text-center text-sm break-keep">내 성향과 찰떡인 진안의 명소, 축제, 특산물을 찾아보세요!</p>
                 <button onclick="startTest()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl transition duration-200 shadow-lg text-lg">
@@ -271,7 +271,7 @@
             document.getElementById('question-text').innerText = q.q;
             
             // 질문 이미지 동적 업데이트 경로 (bgi/q1.png 형식)
-            document.getElementById('question-image').src = `bgi/q${currentIdx + 1}.png`;
+            document.getElementById('question-image').src = `bgi/q${currentIdx + 1}.webp`;
             
             // 버튼 텍스트 설정 및 onClick 이벤트 연결
             const btnA = document.getElementById('answer-a');
