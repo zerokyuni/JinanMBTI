@@ -168,8 +168,8 @@
             {
                 q: "친구가 '진안 여행 가다가 길을 잘못 들어서 너무 헤맸어 ㅠㅠ' 라고 한다면?",
                 answers: [
-                    { text: "어디쯤이야? 진안 관광안내소에 전화해봤어? 전화번호 보내줄까?", type: "T" },
-                    { text: "진짜? 많이 당황했겠다 ㅠㅠ 다치진 않았고? 고생했어!", type: "F" }
+                    { text: "어디서 헤맸는데? 내비가 안 터졌나? 그래서 어떻게 다시 길 찾아서 갔어?", type: "T" },
+                    { text: "진짜? 많이 당황했겠다 ㅠㅠ 다치진 않았고? 그래도 무사히 와서 다행이야!", type: "F" }
                 ]
             },
             {
@@ -315,7 +315,7 @@
             document.getElementById('result-title').innerText = resultData.title;
             
             // 설명 뒤에 MBTI 해시태그와 추가 태그들을 동적 추가
-            document.getElementById('result-desc').innerHTML = `${resultData.desc}<br><br><span class="text-emerald-300 font-bold tracking-wide">#나의_MBTI는_${mbti} ${resultData.tags}</span>`;
+            document.getElementById('result-desc').innerHTML = `${resultData.desc}<br><br><span class="text-emerald-300 font-bold tracking-wide">#${mbti} ${resultData.tags}</span>`;
             
             // 1. 배경 이미지 적용
             document.getElementById('result-card').style.backgroundImage = `url('${resultData.bgImage}')`;
