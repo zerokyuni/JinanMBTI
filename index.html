@@ -22,14 +22,14 @@
         }
         .progress-bar { transition: width 0.3s ease; }
 
-        /* 모바일 터치 잔상(Sticky Hover) 방지용 CSS */
+        /* 모바일 터치 잔상방지용 */
         @media (hover: hover) and (pointer: fine) {
             .answer-btn:hover {
                 background-color: #ecfdf5 !important; /* emerald-50 */
                 border-color: #10b981 !important; /* emerald-500 */
             }
         }
-        /* 터치하는 순간에만 피드백을 줍니다 */
+        /* 터치피드백 */
         .answer-btn:active {
             background-color: #ecfdf5 !important;
             border-color: #10b981 !important;
@@ -40,23 +40,32 @@
 
     <main class="bg-white w-full max-w-md h-full max-h-[850px] rounded-2xl shadow-xl overflow-hidden flex flex-col relative">
 
-        <!-- min-h-0 추가하여 flex 자식요소의 스크롤 정상 작동 보장 -->
-        <section id="start-screen" class="flex flex-col items-center justify-center p-8 flex-1 fade-in relative overflow-y-auto min-h-0 bg-cover bg-center" style="background-image: url('bgi/STARTbg.png');">
+        <!-- 1. 시작 화면 -->
+        <section id="start-screen" class="flex flex-col items-center p-6 flex-1 fade-in relative overflow-y-auto min-h-0 bg-cover bg-center" style="background-image: url('bgi/STARTbg.png');">
             <div class="absolute inset-0 bg-white/80 z-0"></div>
             
-            <div class="relative z-10 flex flex-col items-center w-full mt-4">
-                <!-- 1:1 정사각형 비율로 크기 확장 (w-56 h-56), 테두리 둥글게 적용 -->
-                <img src="bgi/startpg.webp" alt="시작 이미지" class="w-56 h-56 mb-8 object-cover rounded-2xl shadow-md">
+            <!-- min-h-full과 justify-center를 사용해 안정적인 중앙 정렬 -->
+            <div class="relative z-10 flex flex-col items-center justify-center w-full min-h-full py-4">
+                
+                <!-- 진안 방문의 해 상단 배너 -->
+                <div class="w-full max-w-[280px] mb-6">
+                    <a href="https://jinan.go.kr/tour/index.jtour" target="_blank" rel="noopener noreferrer" class="block transition transform hover:scale-105 active:scale-95">
+                        <img src="bgi/banner.webp" alt="진안 방문의 해 배너" class="w-full h-auto object-contain drop-shadow-sm">
+                    </a>
+                </div>
+
+                <!-- 시작 썸네일 (1:1 비율) -->
+                <img src="bgi/startpg.webp" alt="시작 이미지" class="w-56 h-56 mb-6 object-cover rounded-2xl shadow-md shrink-0">
                 
                 <h1 class="text-3xl font-black text-emerald-800 mb-2 text-center break-keep">나는 어떤<br>진안일까?</h1>
-                <p class="text-gray-700 font-bold mb-10 text-center text-sm break-keep">내 성향과 찰떡인 진안을 찾아보세요!</p>
+                <p class="text-gray-700 font-bold mb-8 text-center text-sm break-keep">내 성향과 찰떡인 진안을 찾아보세요!</p>
                 <button onclick="startTest()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl transition duration-200 shadow-lg text-lg shrink-0">
                     테스트 시작하기
                 </button>
             </div>
         </section>
 
-        <!-- min-h-0 추가 -->
+       
         <section id="question-screen" class="flex-col p-6 flex-1 hidden overflow-y-auto min-h-0">
             <div class="w-full shrink-0 bg-gray-200 rounded-full h-2.5 mb-6 mt-2">
                 <div id="progress-bar" class="bg-emerald-500 h-2.5 rounded-full progress-bar" style="width: 0%"></div>
@@ -66,7 +75,7 @@
                 <p id="question-number" class="text-emerald-600 font-bold mb-2 text-sm">Q. 1/12</p>
                 <h2 id="question-text" class="text-xl font-bold break-keep leading-relaxed">질문 텍스트</h2>
                 
-                <!-- 질문 이미지 영역: 1:1 정사각형 비율(w-56 h-56), 가운데 정렬(mx-auto) 적용 -->
+                <!-- 질문 이미지 영역: 1:1 정사각형 비율(w-56 h-56), 가운데 정렬 -->
                 <div class="w-56 h-56 mt-6 mx-auto rounded-2xl overflow-hidden shadow-sm bg-gray-50 flex-shrink-0">
                     <img id="question-image" src="" alt="질문 돕기 이미지" class="w-full h-full object-cover">
                 </div>
@@ -87,24 +96,24 @@
             <h2 class="text-xl font-bold text-gray-700 text-center break-keep">나와 찰떡인<br>진안의 모습을 찾는 중...</h2>
         </section>
 
-        <!-- min-h-0 추가하여 컨텐츠가 길어져도 스크롤되도록 처리, 여백 축소로 모바일 한 화면 최적화 -->
+        <!-- min-h-0 추가 -->
         <section id="result-screen" class="flex-col items-center flex-1 p-4 hidden fade-in overflow-y-auto min-h-0">
-            <!-- shrink-0 추가하여 카드 디자인이 찌그러지지 않고 본래 길이를 유지하게 함 -->
+           
             <div id="result-card" class="w-full shrink-0 rounded-2xl p-5 flex flex-col items-center text-center mt-2 relative overflow-hidden bg-cover bg-center shadow-lg transition-all duration-500">
                 <div class="absolute inset-0 bg-black/60 z-0"></div>
                 
                 <div class="relative z-10 flex flex-col items-center w-full">
                     <p class="text-emerald-300 font-bold mb-1 drop-shadow-md text-sm">당신과 닮은 진안의 모습은</p>
                     <div id="result-emoji" class="text-6xl mb-2 drop-shadow-lg">🌫️</div>
-                    <h1 id="result-title" class="text-2xl font-black text-white mb-3 break-keep drop-shadow-lg">용담호 새벽 물안개</h1>
+                    <h1 id="result-title" class="text-2xl font-black text-white mb-3 break-keep drop-shadow-lg">결과</h1>
                     <div class="w-12 h-1 bg-emerald-400 mb-3 rounded-full shrink-0"></div>
                     <p id="result-desc" class="text-gray-100 text-sm leading-relaxed break-keep text-left w-full drop-shadow-md font-medium">
-                        결과 설명이 여기에 들어갑니다.
+                        결과 설명.
                     </p>
                 </div>
             </div>
 
-            <!-- 스크롤 가장 아래에 버튼이 잘리지 않도록 여백 축소 -->
+            
             <div class="w-full shrink-0 mt-4 space-y-2 mb-2">
                 <button id="more-info-btn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition duration-200 flex justify-center items-center gap-2 shadow-md text-lg">
                     🔎 나의 진안 더 알아보기
@@ -258,7 +267,7 @@
             document.getElementById('question-number').innerText = `Q. ${currentIdx + 1}/${questions.length}`;
             document.getElementById('question-text').innerText = q.q;
             
-            // 질문 이미지 동적 업데이트 경로 (bgi/q1.webp 형식)
+            // 질문 이미지 동적 업데이트 경로
             document.getElementById('question-image').src = `bgi/q${currentIdx + 1}.webp`;
             
             // 버튼 텍스트 설정 및 onClick 이벤트 연결
@@ -277,7 +286,7 @@
         }
 
         function selectAnswer(type) {
-            // 버튼 포커스 해제 (잔상 제거)
+            // 버튼 잔상 제거
             if (document.activeElement) {
                 document.activeElement.blur();
             }
@@ -293,7 +302,7 @@
             loadingScreen.classList.remove('hidden');
             loadingScreen.classList.add('flex');
 
-            // 1.5초 후 결과 화면으로 전환
+            // 1.5초 딜레이
             setTimeout(() => {
                 calculateResult();
             }, 1500);
@@ -308,13 +317,13 @@
 
             const resultData = results[mbti];
             
-            // 공유 기능을 위해 현재 결과 타이틀을 변수에 저장
+            // 공유 기능 변수에 저장
             currentResultTitle = resultData.title;
 
             document.getElementById('result-emoji').innerText = resultData.emoji;
             document.getElementById('result-title').innerText = resultData.title;
             
-            // 설명 뒤에 MBTI 해시태그와 추가 태그들을 동적 추가
+            // 설명 뒤에 태그 동적 추가
             document.getElementById('result-desc').innerHTML = `${resultData.desc}<br><br><span class="text-emerald-300 font-bold tracking-wide">#${mbti} ${resultData.tags}</span>`;
             
             // 1. 배경 이미지 적용
@@ -344,11 +353,11 @@
             const url = window.location.href;
             const shareTitle = "나는 어떤 진안일까? - 진안 MBTI 테스트";
             
-            // 결과 내용을 포함한 공유 텍스트
+            //  공유 텍스트
             const shareText = `저는 [${currentResultTitle}]입니다!\n당신은 어떤 진안인가요?\n\n👉 테스트 하러가기`;
             const fallbackText = `저는 [${currentResultTitle}]입니다! 당신은 어떤 진안인가요? > ${url}`;
 
-            // 1. 모바일 기기 등 Web Share API를 지원하는 경우 (네이티브 공유 창 띄우기)
+            // 1. 모바일 기기 네이티브 공유
             if (navigator.share) {
                 navigator.share({
                     title: shareTitle,
@@ -360,7 +369,7 @@
                     console.log('공유 실패 또는 취소', error);
                 });
             } 
-            // 2. 지원하지 않는 환경 (PC 브라우저 등)에서는 기존처럼 링크 복사
+            // (fallback) 기존처럼 링크 복사
             else {
                 if (navigator.clipboard) {
                     navigator.clipboard.writeText(fallbackText).then(() => {
@@ -374,7 +383,7 @@
             }
         }
 
-        // Clipboard API를 지원하지 않는 브라우저를 위한 폴백 함수
+        // Clipboard API 미지원 브라우저 fallback
         function fallbackCopyTextToClipboard(text) {
             const textArea = document.createElement("textarea");
             textArea.value = text;
